@@ -3,6 +3,7 @@ import time
 from backend.util.crypto_hash import crypto_hash
 from backend.util.hex_to_binary import hex_to_binary
 from backend.config import MINE_RATE
+
 GENESIS_DATA = {
     'timestamp': 1,
     'last_hash': 'genesis_last_hash',
@@ -17,7 +18,7 @@ class Block:
     Block: a unit of storage.
     Store transactions in a blockchain that supports a cryptocurrency.
     """
-    def __init__(self,timestamp, last_hash, hash, data, difficulty, nonce):
+    def __init__(self, timestamp, last_hash, hash, data, difficulty, nonce):
         self.timestamp = timestamp
         self.last_hash = last_hash
         self.hash = hash
@@ -31,24 +32,25 @@ class Block:
             f'timestamp: {self.timestamp}, '
             f'last_hash: {self.last_hash}, '
             f'hash: {self.hash}, '
-            f'data: {self.data}), '
+            f'data: {self.data}, '
             f'difficulty: {self.difficulty}, '
-            f'nonce: {self.nonce}'
-            )
+            f'nonce: {self.nonce})'
+        )
 
     def __eq__(self, other):
         return self.__dict__ == other.__dict__
 
     def to_json(self):
         """
-        Serialise the block into a dictionary of its attributes
+        Serialize the block into a dictionary of its attributes
         """
         return self.__dict__
 
     @staticmethod
     def mine_block(last_block, data):
         """
-        Mine a block based on the given last_block and data, until a block hash is found that meets the leading 0's proof of work requirement.
+        Mine a block based on the given last_block and data, until a block hash
+        is found that meets the leading 0's proof of work requirement.
         """
         timestamp = time.time_ns()
         last_hash = last_block.hash
@@ -76,8 +78,8 @@ class Block:
         """
         Deserialize a block's json representation back into a block instance.
         """
-        return Block(**block_json)    
-            
+        return Block(**block_json)
+
     @staticmethod
     def adjust_difficulty(last_block, new_timestamp):
         """
@@ -90,18 +92,18 @@ class Block:
 
         if (last_block.difficulty - 1) > 0:
             return last_block.difficulty - 1
-        
+
         return 1
 
     @staticmethod
     def is_valid_block(last_block, block):
         """
-        Validate a block by enforcing the following rules:
-            - the block must have the proper last_hash ref
-            - the block must meet the proof of work requirements
-            - the difficulty must only adjust by 1
-            - the block hash must be a valid combination of the block fields
-        """ 
+        Validate block by enforcing the following rules:
+          - the block must have the proper last_hash reference
+          - the block must meet the proof of work requirement
+          - the difficulty must only adjust by 1
+          - the block hash must be a valid combination of the block fields
+        """
         if block.last_hash != last_block.hash:
             raise Exception('The block last_hash must be correct')
 
@@ -121,7 +123,6 @@ class Block:
 
         if block.hash != reconstructed_hash:
             raise Exception('The block hash must be correct')
-
 
 def main():
     genesis_block = Block.genesis()
